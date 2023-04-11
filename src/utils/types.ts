@@ -4,3 +4,8 @@ export type WithRequiredProperty<T, K extends keyof T> = T & {
   [P in K]-?: T[P];
 };
 export type Modify<T, R> = Omit<T, keyof R> & R;
+
+export interface AppResponse<T = unknown> {
+  data: T;
+  code: number;
+}

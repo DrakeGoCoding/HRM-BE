@@ -1,8 +1,16 @@
 require('module-alias/register');
+import Database from '@/configs/database';
+import { handleError } from '@/middlewares/error.middleware';
+import {
+  authRoute,
+  departmentRoute,
+  positionRoute,
+  profileRoute
+} from '@/routes';
+import cors from 'cors';
 import dotenv from 'dotenv';
 import express, { Application } from 'express';
-import Database from '@/configs/database';
-import router from '@/routes/index';
+import AppError from './utils/error';
 
 dotenv.config();
 
@@ -12,15 +20,25 @@ class App {
   constructor() {
     this.app = express();
     this.database();
-    this.middlewares();
+    this.plugins();
     this.routes();
   }
 
   protected routes(): void {
-    this.app.use(router);
+    this.app.use('/auth', authRoute);
+    this.app.use('/profiles', profileRoute);
+    this.app.use('/departments', departmentRoute);
+    this.app.use('/positions', positionRoute);
+    this.app.use('*', (req, res, next) => {
+      const error = new AppError({ code: 404, message: 'Undefined route' });
+      next(error);
+    });
+
+    this.app.use(handleError);
   }
 
-  protected middlewares(): void {
+  protected plugins(): void {
+    this.app.use(cors());
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: false }));
   }

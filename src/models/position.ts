@@ -6,7 +6,22 @@ import {
   Model,
   Table
 } from 'sequelize-typescript';
-import Department from './department';
+import { BASE_ATTRIBUTES, BaseAttributes } from '.';
+import Department, { DepartmentAttributes } from './department';
+
+export interface PositionAttributes extends BaseAttributes {
+  id: number;
+  code: string;
+  name: string;
+  description: string;
+  departmentId: number;
+  department?: DepartmentAttributes;
+}
+
+export const OMIT_POSITION_ATTRIBUTES = [
+  ...BASE_ATTRIBUTES,
+  'department'
+] as Array<keyof PositionAttributes>;
 
 @Table({
   tableName: Position.VAR_TABLE_NAME

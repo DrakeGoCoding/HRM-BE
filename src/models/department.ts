@@ -6,12 +6,27 @@ import {
   Model,
   Table
 } from 'sequelize-typescript';
+import { BASE_ATTRIBUTES, BaseAttributes } from '.';
 import Profile from './profile';
+
+export interface DepartmentAttributes extends BaseAttributes {
+  id: number;
+  code: string;
+  name: string;
+  establishedDate: Date;
+  managerId: number;
+  manager?: Profile;
+}
+
+export const OMIT_DEPARTMENT_ATTRIBUTES = [
+  ...BASE_ATTRIBUTES,
+  'manager'
+] as Array<keyof DepartmentAttributes>;
 
 @Table({
   tableName: Department.VAR_TABLE_NAME
 })
-class Department extends Model {
+class Department extends Model implements DepartmentAttributes {
   public static readonly VAR_TABLE_NAME = 'departments';
   public static readonly VAR_ID = 'id';
   public static readonly VAR_CODE = 'code';
@@ -61,9 +76,5 @@ class Department extends Model {
   @BelongsTo(() => Profile)
   manager!: Profile;
 }
-
-Department.belongsTo(Profile, {
-  foreignKey: Department.VAR_MANAGER_ID
-});
 
 export default Department;

@@ -1,8 +1,8 @@
-import { Sequelize } from 'sequelize-typescript';
-import User from '@/models/user';
-import Profile from '@/models/profile';
 import Department from '@/models/department';
 import Position from '@/models/position';
+import Profile from '@/models/profile';
+import User from '@/models/user';
+import { Sequelize } from 'sequelize-typescript';
 
 class Database {
   public sequelize?: Sequelize;
@@ -29,7 +29,8 @@ class Database {
       define: {
         paranoid: true,
         timestamps: true
-      }
+      },
+      logging: process.env.NODE_ENV === 'development'
     });
 
     await this.sequelize

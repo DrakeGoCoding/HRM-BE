@@ -1,19 +1,22 @@
-import { BaseService } from '.';
-import User from '../models/user';
+import Helper from '@/utils/helper';
+import { AppResponse } from '@/utils/types';
+import User, { OMIT_USER_ATTRIBUTES, UserAttributes } from '../models/user';
+import { BaseService } from './base.service';
 
-export class UserService extends BaseService<User> {
+class UserService extends BaseService<User, UserAttributes> {
   getModel() {
     return User;
   }
-  async create(user: User): Promise<User> {
-    try {
-      const newUser = await User.create({
-        email: user.username,
-        password: user.password
-      });
-      return newUser;
-    } catch (error) {
-      throw new Error('Failed to create user');
-    }
+
+  async create(payload: UserAttributes): Promise<AppResponse<User>> {
+    const newUser = await User.create(
+      Helper.omit(payload, OMIT_USER_ATTRIBUTES)
+    );
+    return {
+      data: newUser,
+      code: 201
+    };
   }
 }
+
+export default new UserService();

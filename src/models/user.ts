@@ -1,14 +1,28 @@
 import { Column, DataType, Model, Table } from 'sequelize-typescript';
+import { BASE_ATTRIBUTES, BaseAttributes } from '.';
 
-export const USER_ROLE = ['staff', 'manager', 'admin'] as const;
-export type UserRole = typeof USER_ROLE[number];
+export enum UserRole {
+  STAFF = 'staff',
+  MANAGER = 'manager',
+  ADMIN = 'admin'
+}
 
 export const DEFAULT_PASSWORD = '1Abcde@hrm';
 
+export interface UserAttributes extends BaseAttributes {
+  username: string;
+  password: string;
+  role: UserRole;
+}
+
+export const OMIT_USER_ATTRIBUTES = [...BASE_ATTRIBUTES] as Array<
+  keyof UserAttributes
+>;
+
 @Table({
-  tableName: User.VAR_TABLE_NAME
+  tableName: User.VAR_TABLE_NAME,
 })
-class User extends Model {
+class User extends Model implements UserAttributes {
   public static readonly VAR_TABLE_NAME = 'users';
   public static readonly VAR_ID = 'id';
   public static readonly VAR_USERNAME = 'username';
@@ -39,10 +53,10 @@ class User extends Model {
   password!: string;
 
   @Column({
-    type: DataType.ENUM(...USER_ROLE),
+    type: DataType.ENUM(...Object.values(UserRole)),
     field: User.VAR_ROLE,
     allowNull: false,
-    defaultValue: USER_ROLE[0]
+    defaultValue: UserRole.STAFF
   })
   role!: UserRole;
 }
