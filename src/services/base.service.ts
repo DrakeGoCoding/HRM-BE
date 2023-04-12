@@ -1,4 +1,5 @@
 import AppError from '@/utils/error';
+import Helper from '@/utils/helper';
 import { AppResponse } from '@/utils/types';
 import { Model, ModelCtor } from 'sequelize-typescript';
 
@@ -13,12 +14,28 @@ export interface IBaseService<T extends Model, A> {
 export abstract class BaseService<T extends Model, A extends {}>
   implements IBaseService<T, A>
 {
-  abstract getModel(): ModelCtor<T>;
-  abstract create(payload: A): Promise<AppResponse<T>>;
+  model: ModelCtor<T>;
+  omitAttributes: Array<keyof A>;
+
+  constructor(model: ModelCtor<T>, omitAttributes: Array<keyof A>) {
+    this.model = model;
+    this.omitAttributes = omitAttributes;
+  }
+
+  async create(payload: A): Promise<AppResponse<T>> {
+    const newRecord = await this.model.create(
+      Helper.omit(payload, this.omitAttributes) as any
+    );
+    return {
+      data: newRecord,
+      code: 201
+    };
+  }
 
   async update(id: number, payload: Partial<A>): Promise<AppResponse<T>> {
-    const modelName: string = this.getModel().tableName;
+    const modelName: string = this.model.tableName;
     const { data } = await this.getById(id);
+
     if (!data) {
       throw new AppError({
         code: 400,
@@ -36,15 +53,17 @@ export abstract class BaseService<T extends Model, A extends {}>
   }
 
   async delete(id: number): Promise<AppResponse<number>> {
-    const modelName: string = this.getModel().tableName;
-    const record = await this.getById(id);
-    if (!record.data) {
+    const modelName: string = this.model.tableName;
+    const { data } = await this.getById(id);
+
+    if (!data) {
       throw new AppError({
         code: 400,
         message: `${modelName} not found`
       });
     }
-    await record.data.destroy();
+
+    await data.destroy();
 
     return {
       data: id,
@@ -53,9 +72,10 @@ export abstract class BaseService<T extends Model, A extends {}>
   }
 
   async getById(id: number): Promise<AppResponse<T | null>> {
-    const record = await this.getModel().findOne<T>({
+    const record = await this.model.findOne<T>({
       where: { id } as any
     });
+
     return {
       data: record,
       code: 200
@@ -63,7 +83,8 @@ export abstract class BaseService<T extends Model, A extends {}>
   }
 
   async getAll(): Promise<AppResponse<T[]>> {
-    const records = await this.getModel().findAll<T>();
+    const records = await this.model.findAll<T>();
+
     return {
       data: records,
       code: 200

@@ -33,6 +33,8 @@ class Department extends Model implements DepartmentAttributes {
   public static readonly VAR_NAME = 'name';
   public static readonly VAR_ESTABLISHED_DATE = 'establishedDate';
   public static readonly VAR_MANAGER_ID = 'managerId';
+  public static readonly VAR_CREATED_AT = 'createdAt';
+  public static readonly VAR_UPDATED_AT = 'updatedAt';
 
   @Column({
     type: DataType.INTEGER,
@@ -58,8 +60,9 @@ class Department extends Model implements DepartmentAttributes {
   name!: string;
 
   @Column({
-    type: DataType.DATE,
-    field: Department.VAR_ESTABLISHED_DATE
+    type: DataType.DATEONLY,
+    field: Department.VAR_ESTABLISHED_DATE,
+    defaultValue: DataType.NOW
   })
   establishedDate!: Date;
 
@@ -75,6 +78,22 @@ class Department extends Model implements DepartmentAttributes {
 
   @BelongsTo(() => Profile)
   manager!: Profile;
+
+  @Column({
+    type: DataType.DATE,
+    field: Department.VAR_CREATED_AT,
+    allowNull: true,
+    defaultValue: DataType.NOW
+  })
+  createdAt!: Date;
+
+  @Column({
+    type: DataType.DATE,
+    field: Department.VAR_UPDATED_AT,
+    allowNull: true,
+    defaultValue: DataType.NOW
+  })
+  updatedAt!: Date;
 }
 
 export default Department;

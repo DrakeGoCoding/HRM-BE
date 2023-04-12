@@ -1,21 +1,10 @@
-import { NextFunction, Request, Response } from 'express';
 import { BaseController } from './base.controller';
+import Profile, { ProfileAttributes } from '@/models/profile';
+import { profileService } from '@/services';
 
-class ProfileController extends BaseController {
-  getAll(req: Request, res: Response, next: NextFunction): Promise<void> {
-    throw new Error('Method not implemented.');
-  }
-  getById(req: Request, res: Response, next: NextFunction): Promise<void> {
-    throw new Error('Method not implemented.');
-  }
-  create(req: Request, res: Response, next: NextFunction): Promise<void> {
-    throw new Error('Method not implemented.');
-  }
-  update(req: Request, res: Response, next: NextFunction): Promise<void> {
-    throw new Error('Method not implemented.');
-  }
-  delete(req: Request, res: Response, next: NextFunction): Promise<void> {
-    throw new Error('Method not implemented.');
+class ProfileController extends BaseController<Profile, ProfileAttributes> {
+  constructor() {
+    super(profileService);
   }
 }
 

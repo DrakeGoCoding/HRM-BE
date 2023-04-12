@@ -33,6 +33,8 @@ class Position extends Model {
   public static readonly VAR_NAME = 'name';
   public static readonly VAR_DESCRIPTION = 'description';
   public static readonly VAR_DEPARTMENT_ID = 'departmentId';
+  public static readonly VAR_CREATED_AT = 'createdAt';
+  public static readonly VAR_UPDATED_AT = 'updatedAt';
 
   @Column({
     type: DataType.INTEGER,
@@ -75,6 +77,22 @@ class Position extends Model {
 
   @BelongsTo(() => Department)
   department!: Department;
+
+  @Column({
+    type: DataType.DATE,
+    field: Position.VAR_CREATED_AT,
+    allowNull: true,
+    defaultValue: DataType.NOW
+  })
+  createdAt!: Date;
+
+  @Column({
+    type: DataType.DATE,
+    field: Position.VAR_UPDATED_AT,
+    allowNull: true,
+    defaultValue: DataType.NOW
+  })
+  updatedAt!: Date;
 }
 
 export default Position;

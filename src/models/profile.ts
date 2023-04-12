@@ -72,6 +72,8 @@ class Profile extends Model implements ProfileAttributes {
   public static readonly VAR_AVATAR = 'avatar';
   public static readonly VAR_STATUS = 'status';
   public static readonly VAR_BIOGRAPHY = 'biography';
+  public static readonly VAR_CREATED_AT = 'createdAt';
+  public static readonly VAR_UPDATED_AT = 'updatedAt';
 
   @Column({
     type: DataType.INTEGER,
@@ -133,7 +135,7 @@ class Profile extends Model implements ProfileAttributes {
   phoneNumber!: string;
 
   @Column({
-    type: DataType.DATE,
+    type: DataType.DATEONLY,
     field: Profile.VAR_DOB
   })
   dateOfBirth!: Date;
@@ -188,6 +190,22 @@ class Profile extends Model implements ProfileAttributes {
     field: Profile.VAR_BIOGRAPHY
   })
   biography!: string;
+
+  @Column({
+    type: DataType.DATE,
+    field: Profile.VAR_CREATED_AT,
+    allowNull: true,
+    defaultValue: DataType.NOW
+  })
+  createdAt!: Date;
+
+  @Column({
+    type: DataType.DATE,
+    field: Profile.VAR_UPDATED_AT,
+    allowNull: true,
+    defaultValue: DataType.NOW
+  })
+  updatedAt!: Date;
 }
 
 export default Profile;

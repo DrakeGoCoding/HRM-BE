@@ -1,4 +1,7 @@
+import { BaseService } from '@/services/base.service';
+import AppError from '@/utils/error';
 import { NextFunction, Request, Response } from 'express';
+import { Model } from 'sequelize-typescript';
 
 export interface IBaseController {
   getAll(req: Request, res: Response, next: NextFunction): Promise<void>;
@@ -8,30 +11,85 @@ export interface IBaseController {
   delete(req: Request, res: Response, next: NextFunction): Promise<void>;
 }
 
-export abstract class BaseController implements IBaseController {
-  abstract getAll(
+export abstract class BaseController<T extends Model, A extends {}>
+  implements IBaseController
+{
+  service: BaseService<T, A>;
+
+  constructor(service: BaseService<T, A>) {
+    this.service = service;
+    console.log(service);
+  }
+
+  async getAll(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      // TODO: query
+      res.status(200).json({});
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getById(
     req: Request,
     res: Response,
     next: NextFunction
-  ): Promise<void>;
-  abstract getById(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void>;
-  abstract create(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void>;
-  abstract update(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void>;
-  abstract delete(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void>;
+  ): Promise<void> {
+    try {
+      const id = Number(req.params.id);
+      if (!id) {
+        throw new AppError({
+          code: 400,
+          message: 'Undefined route'
+        });
+      }
+      const { code, data } = await this.service.getById(id);
+      res.status(code).json(data);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async create(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const payload = req.body;
+      const { code, data } = await this.service.create(payload);
+      res.status(code).json(data);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async update(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const id = Number(req.params.id);
+      if (!id) {
+        throw new AppError({
+          code: 400,
+          message: 'Undefined route'
+        });
+      }
+      const payload = req.body;
+      const { code, data } = await this.service.update(id, payload);
+      res.status(code).json(data);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const id = Number(req.params.id);
+      if (!id) {
+        throw new AppError({
+          code: 400,
+          message: 'Undefined route'
+        });
+      }
+      const { code, data } = await this.service.delete(id);
+      res.status(code).json(data);
+    } catch (error) {
+      next(error);
+    }
+  }
 }

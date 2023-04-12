@@ -11,6 +11,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import express, { Application } from 'express';
 import AppError from './utils/error';
+import cookieParser from 'cookie-parser';
 
 dotenv.config();
 
@@ -39,6 +40,7 @@ class App {
 
   protected plugins(): void {
     this.app.use(cors());
+    this.app.use(cookieParser());
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: false }));
   }

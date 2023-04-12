@@ -2,7 +2,7 @@ import Department from '@/models/department';
 import Position from '@/models/position';
 import Profile from '@/models/profile';
 import User from '@/models/user';
-import { Sequelize } from 'sequelize-typescript';
+import { Model, Sequelize } from 'sequelize-typescript';
 
 class Database {
   public sequelize?: Sequelize;

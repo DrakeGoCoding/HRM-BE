@@ -1,21 +1,13 @@
-import { NextFunction, Request, Response } from 'express';
+import Department, { DepartmentAttributes } from '@/models/department';
+import { departmentService } from '@/services';
 import { BaseController } from './base.controller';
 
-class DepartmentController extends BaseController {
-  getAll(req: Request, res: Response, next: NextFunction): Promise<void> {
-    throw new Error('Method not implemented.');
-  }
-  getById(req: Request, res: Response, next: NextFunction): Promise<void> {
-    throw new Error('Method not implemented.');
-  }
-  create(req: Request, res: Response, next: NextFunction): Promise<void> {
-    throw new Error('Method not implemented.');
-  }
-  update(req: Request, res: Response, next: NextFunction): Promise<void> {
-    throw new Error('Method not implemented.');
-  }
-  delete(req: Request, res: Response, next: NextFunction): Promise<void> {
-    throw new Error('Method not implemented.');
+class DepartmentController extends BaseController<
+  Department,
+  DepartmentAttributes
+> {
+  constructor() {
+    super(departmentService);
   }
 }
 

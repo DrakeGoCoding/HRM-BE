@@ -20,7 +20,7 @@ export const OMIT_USER_ATTRIBUTES = [...BASE_ATTRIBUTES] as Array<
 >;
 
 @Table({
-  tableName: User.VAR_TABLE_NAME,
+  tableName: User.VAR_TABLE_NAME
 })
 class User extends Model implements UserAttributes {
   public static readonly VAR_TABLE_NAME = 'users';
@@ -28,6 +28,8 @@ class User extends Model implements UserAttributes {
   public static readonly VAR_USERNAME = 'username';
   public static readonly VAR_PASSWORD = 'password';
   public static readonly VAR_ROLE = 'role';
+  public static readonly VAR_CREATED_AT = 'createdAt';
+  public static readonly VAR_UPDATED_AT = 'updatedAt';
 
   @Column({
     type: DataType.INTEGER,
@@ -59,6 +61,22 @@ class User extends Model implements UserAttributes {
     defaultValue: UserRole.STAFF
   })
   role!: UserRole;
+
+  @Column({
+    type: DataType.DATE,
+    field: User.VAR_CREATED_AT,
+    allowNull: true,
+    defaultValue: DataType.NOW
+  })
+  createdAt!: Date;
+
+  @Column({
+    type: DataType.DATE,
+    field: User.VAR_UPDATED_AT,
+    allowNull: true,
+    defaultValue: DataType.NOW
+  })
+  updatedAt!: Date;
 }
 
 export default User;

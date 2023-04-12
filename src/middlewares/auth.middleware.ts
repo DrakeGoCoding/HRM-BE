@@ -7,14 +7,14 @@ export const authenticate = async (
   res: Response,
   next: NextFunction
 ) => {
-  const token: string | undefined = req.cookies.token;
+  const accessToken: string | undefined = req.cookies?.['access_token'];
 
-  if (!token) {
+  if (!accessToken) {
     return res.status(401).send('Unauthorized');
   }
 
   try {
-    const credential = Authentication.validateToken(token);
+    const credential = Authentication.validateToken(accessToken);
     if (!credential) {
       return res.status(401).send('Invalid token');
     }

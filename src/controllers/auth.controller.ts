@@ -8,10 +8,9 @@ export interface IAuthController {
 class AuthController implements IAuthController {
   async login(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const { username, password } = req.body;
+      const { username = '', password = '' } = req.body;
       const { code, data } = await authService.login(username, password);
-      res.cookie('access_token', data.token);
-      res.status(code).json(data);
+      res.cookie('access_token', data.token).status(code).json(data);
     } catch (error) {
       next(error);
     }
