@@ -96,9 +96,11 @@ class Profile extends Model implements ProfileAttributes {
       return [this.firstName, this.lastName].filter(Boolean).join(' ');
     }
   })
+  fullName!: string;
+
   @Column({
     type: DataType.ENUM(...GENDER),
-    field: 'gender'
+    field: 'gender',
   })
   gender!: Gender;
 
