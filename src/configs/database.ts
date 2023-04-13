@@ -1,8 +1,9 @@
 import Department from '@/models/department';
 import Position from '@/models/position';
 import Profile from '@/models/profile';
+import ProfilePosition from '@/models/profile_position';
 import User from '@/models/user';
-import { Model, Sequelize } from 'sequelize-typescript';
+import { Sequelize } from 'sequelize-typescript';
 
 class Database {
   public sequelize?: Sequelize;
@@ -25,10 +26,10 @@ class Database {
       host: this.POSTGRES_HOST,
       port: this.POSTGRES_PORT,
       dialect: 'postgres',
-      models: [User, Profile, Department, Position],
+      models: [User, Profile, Department, Position, ProfilePosition],
       define: {
         paranoid: true,
-        timestamps: true
+        timestamps: true,
       },
       logging: process.env.NODE_ENV === 'development'
     });

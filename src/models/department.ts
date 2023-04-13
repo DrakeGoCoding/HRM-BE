@@ -2,7 +2,6 @@ import {
   BelongsTo,
   Column,
   DataType,
-  ForeignKey,
   Model,
   Table
 } from 'sequelize-typescript';
@@ -10,7 +9,6 @@ import { BASE_ATTRIBUTES, BaseAttributes } from '.';
 import Profile from './profile';
 
 export interface DepartmentAttributes extends BaseAttributes {
-  id: number;
   code: string;
   name: string;
   establishedDate: Date;
@@ -24,64 +22,56 @@ export const OMIT_DEPARTMENT_ATTRIBUTES = [
 ] as Array<keyof DepartmentAttributes>;
 
 @Table({
-  tableName: Department.VAR_TABLE_NAME
+  tableName: 'departments'
 })
 class Department extends Model implements DepartmentAttributes {
-  public static readonly VAR_TABLE_NAME = 'departments';
-  public static readonly VAR_ID = 'id';
-  public static readonly VAR_CODE = 'code';
-  public static readonly VAR_NAME = 'name';
-  public static readonly VAR_ESTABLISHED_DATE = 'establishedDate';
-  public static readonly VAR_MANAGER_ID = 'managerId';
-  public static readonly VAR_CREATED_AT = 'createdAt';
-  public static readonly VAR_UPDATED_AT = 'updatedAt';
-
   @Column({
     type: DataType.INTEGER,
     primaryKey: true,
     autoIncrement: true,
-    field: Department.VAR_ID
+    field: 'id'
   })
   id!: number;
 
   @Column({
     type: DataType.STRING(10),
-    field: Department.VAR_CODE,
-    unique: true,
-    allowNull: false
+    field: 'code',
+    unique: true
   })
   code!: string;
 
   @Column({
     type: DataType.STRING(50),
-    field: Department.VAR_NAME,
-    allowNull: false
+    field: 'name'
   })
   name!: string;
 
   @Column({
     type: DataType.DATEONLY,
-    field: Department.VAR_ESTABLISHED_DATE,
+    field: 'establishedDate',
     defaultValue: DataType.NOW
   })
   establishedDate!: Date;
 
-  @ForeignKey(() => Profile)
   @Column({
     type: DataType.INTEGER,
-    field: Department.VAR_MANAGER_ID,
-    allowNull: false,
+    field: 'managerId',
     defaultValue: 0,
-    onDelete: 'SET DEFAULT'
+    onDelete: 'SET DEFAULT',
+    onUpdate: 'CASCADE',
+    references: {
+      model: 'profiles',
+      key: 'id'
+    }
   })
   managerId!: number;
 
-  @BelongsTo(() => Profile)
-  manager!: Profile;
+  @BelongsTo(() => Profile, 'managerId')
+  manager?: Profile;
 
   @Column({
     type: DataType.DATE,
-    field: Department.VAR_CREATED_AT,
+    field: 'createdAt',
     allowNull: true,
     defaultValue: DataType.NOW
   })
@@ -89,7 +79,7 @@ class Department extends Model implements DepartmentAttributes {
 
   @Column({
     type: DataType.DATE,
-    field: Department.VAR_UPDATED_AT,
+    field: 'updatedAt',
     allowNull: true,
     defaultValue: DataType.NOW
   })

@@ -18,23 +18,26 @@ export abstract class BaseController<T extends Model, A extends {}>
 
   constructor(service: BaseService<T, A>) {
     this.service = service;
-    console.log(service);
   }
 
-  async getAll(req: Request, res: Response, next: NextFunction): Promise<void> {
-    try {
-      // TODO: query
-      res.status(200).json({});
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  async getById(
+  getAll = async (
     req: Request,
     res: Response,
     next: NextFunction
-  ): Promise<void> {
+  ): Promise<void> => {
+    try {
+      const { code, data } = await this.service.getAll();
+      res.status(code).json({ data });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  getById = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
     try {
       const id = Number(req.params.id);
       if (!id) {
@@ -44,23 +47,30 @@ export abstract class BaseController<T extends Model, A extends {}>
         });
       }
       const { code, data } = await this.service.getById(id);
-      res.status(code).json(data);
+      res.status(code).json({ data });
     } catch (error) {
       next(error);
     }
-  }
+  };
 
-  async create(req: Request, res: Response, next: NextFunction): Promise<void> {
+  create = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
     try {
-      const payload = req.body;
-      const { code, data } = await this.service.create(payload);
+      const { code, data } = await this.service.create(req.body);
       res.status(code).json(data);
     } catch (error) {
       next(error);
     }
-  }
+  };
 
-  async update(req: Request, res: Response, next: NextFunction): Promise<void> {
+  update = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
     try {
       const id = Number(req.params.id);
       if (!id) {
@@ -71,13 +81,17 @@ export abstract class BaseController<T extends Model, A extends {}>
       }
       const payload = req.body;
       const { code, data } = await this.service.update(id, payload);
-      res.status(code).json(data);
+      res.status(code).json({ data });
     } catch (error) {
       next(error);
     }
-  }
+  };
 
-  async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
+  delete = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
     try {
       const id = Number(req.params.id);
       if (!id) {
@@ -91,5 +105,5 @@ export abstract class BaseController<T extends Model, A extends {}>
     } catch (error) {
       next(error);
     }
-  }
+  };
 }

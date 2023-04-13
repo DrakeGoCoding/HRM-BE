@@ -1,3 +1,4 @@
+import Authentication from '@/utils/auth';
 import { Column, DataType, Model, Table } from 'sequelize-typescript';
 import { BASE_ATTRIBUTES, BaseAttributes } from '.';
 
@@ -20,7 +21,12 @@ export const OMIT_USER_ATTRIBUTES = [...BASE_ATTRIBUTES] as Array<
 >;
 
 @Table({
-  tableName: User.VAR_TABLE_NAME
+  tableName: User.VAR_TABLE_NAME,
+  hooks: {
+    beforeCreate: (user: User) => {
+      user.password = Authentication.hashPassword(DEFAULT_PASSWORD);
+    }
+  }
 })
 class User extends Model implements UserAttributes {
   public static readonly VAR_TABLE_NAME = 'users';
@@ -42,7 +48,8 @@ class User extends Model implements UserAttributes {
   @Column({
     type: DataType.STRING(50),
     field: User.VAR_USERNAME,
-    allowNull: false
+    allowNull: false,
+    unique: true
   })
   username!: string;
 

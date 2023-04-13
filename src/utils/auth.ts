@@ -12,7 +12,7 @@ class Authentication {
   public static hashPassword(password: string): string {
     return bcrypt.hashSync(
       password,
-      bcrypt.genSaltSync(process.env.SALT_ROUNDS as unknown as number)
+      bcrypt.genSaltSync(Number(process.env.SALT_ROUNDS))
     );
   }
 

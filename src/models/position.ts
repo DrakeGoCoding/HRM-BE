@@ -2,7 +2,6 @@ import {
   BelongsTo,
   Column,
   DataType,
-  ForeignKey,
   Model,
   Table
 } from 'sequelize-typescript';
@@ -24,63 +23,55 @@ export const OMIT_POSITION_ATTRIBUTES = [
 ] as Array<keyof PositionAttributes>;
 
 @Table({
-  tableName: Position.VAR_TABLE_NAME
+  tableName: 'positions'
 })
 class Position extends Model {
-  public static readonly VAR_TABLE_NAME = 'positions';
-  public static readonly VAR_ID = 'id';
-  public static readonly VAR_CODE = 'code';
-  public static readonly VAR_NAME = 'name';
-  public static readonly VAR_DESCRIPTION = 'description';
-  public static readonly VAR_DEPARTMENT_ID = 'departmentId';
-  public static readonly VAR_CREATED_AT = 'createdAt';
-  public static readonly VAR_UPDATED_AT = 'updatedAt';
-
   @Column({
     type: DataType.INTEGER,
     primaryKey: true,
     autoIncrement: true,
-    field: Position.VAR_ID
+    field: 'id'
   })
   id!: number;
 
   @Column({
     type: DataType.STRING(10),
-    field: Position.VAR_CODE,
-    unique: true,
-    allowNull: false
+    field: 'code',
+    unique: true
   })
   code!: string;
 
   @Column({
     type: DataType.STRING(50),
-    field: Position.VAR_NAME,
-    allowNull: false
+    field: 'name'
   })
   name!: string;
 
   @Column({
     type: DataType.TEXT,
-    field: Position.VAR_DESCRIPTION,
-    allowNull: true
+    field: 'description'
   })
   description!: string;
 
-  @ForeignKey(() => Department)
   @Column({
     type: DataType.INTEGER,
-    field: Position.VAR_DEPARTMENT_ID,
-    allowNull: false,
-    onDelete: 'CASCADE'
+    field: 'departmentId',
+    defaultValue: 0,
+    onUpdate: 'CASCADE',
+    onDelete: 'CASCADE',
+    references: {
+      model: 'departments',
+      key: 'id'
+    }
   })
   departmentId!: number;
 
-  @BelongsTo(() => Department)
-  department!: Department;
+  @BelongsTo(() => Department, 'departmentId')
+  department?: Department;
 
   @Column({
     type: DataType.DATE,
-    field: Position.VAR_CREATED_AT,
+    field: 'createdAt',
     allowNull: true,
     defaultValue: DataType.NOW
   })
@@ -88,7 +79,7 @@ class Position extends Model {
 
   @Column({
     type: DataType.DATE,
-    field: Position.VAR_UPDATED_AT,
+    field: 'updatedAt',
     allowNull: true,
     defaultValue: DataType.NOW
   })

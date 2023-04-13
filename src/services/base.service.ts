@@ -22,7 +22,7 @@ export abstract class BaseService<T extends Model, A extends {}>
     this.omitAttributes = omitAttributes;
   }
 
-  async create(payload: A): Promise<AppResponse<T>> {
+  create = async (payload: A): Promise<AppResponse<T>> => {
     const newRecord = await this.model.create(
       Helper.omit(payload, this.omitAttributes) as any
     );
@@ -30,9 +30,9 @@ export abstract class BaseService<T extends Model, A extends {}>
       data: newRecord,
       code: 201
     };
-  }
+  };
 
-  async update(id: number, payload: Partial<A>): Promise<AppResponse<T>> {
+  update = async (id: number, payload: Partial<A>): Promise<AppResponse<T>> => {
     const modelName: string = this.model.tableName;
     const { data } = await this.getById(id);
 
@@ -50,9 +50,9 @@ export abstract class BaseService<T extends Model, A extends {}>
       data: updatedNote,
       code: 200
     };
-  }
+  };
 
-  async delete(id: number): Promise<AppResponse<number>> {
+  delete = async (id: number): Promise<AppResponse<number>> => {
     const modelName: string = this.model.tableName;
     const { data } = await this.getById(id);
 
@@ -69,25 +69,33 @@ export abstract class BaseService<T extends Model, A extends {}>
       data: id,
       code: 200
     };
-  }
+  };
 
-  async getById(id: number): Promise<AppResponse<T | null>> {
+  getById = async (id: number): Promise<AppResponse<T | null>> => {
     const record = await this.model.findOne<T>({
-      where: { id } as any
+      where: { id } as any,
+      include: {
+        all: true
+      }
     });
 
     return {
       data: record,
       code: 200
     };
-  }
+  };
 
-  async getAll(): Promise<AppResponse<T[]>> {
-    const records = await this.model.findAll<T>();
+  getAll = async (): Promise<AppResponse<T[]>> => {
+    const records = await this.model.findAll<T>({
+      include: {
+        all: true,
+        nested: true
+      }
+    });
 
     return {
       data: records,
       code: 200
     };
-  }
+  };
 }
