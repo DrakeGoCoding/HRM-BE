@@ -1,3 +1,4 @@
+import { BaseAttributes } from '@/models';
 import { BaseService } from '@/services/base.service';
 import AppError from '@/utils/error';
 import { NextFunction, Request, Response } from 'express';
@@ -11,7 +12,7 @@ export interface IBaseController {
   delete(req: Request, res: Response, next: NextFunction): Promise<void>;
 }
 
-export abstract class BaseController<T extends Model, A extends {}>
+export abstract class BaseController<T extends Model, A extends BaseAttributes>
   implements IBaseController
 {
   service: BaseService<T, A>;
@@ -26,7 +27,7 @@ export abstract class BaseController<T extends Model, A extends {}>
     next: NextFunction
   ): Promise<void> => {
     try {
-      const { code, data } = await this.service.getAll();
+      const { code, data } = await this.service.getAll(req.body);
       res.status(code).json({ data });
     } catch (error) {
       next(error);

@@ -1,17 +1,31 @@
+import { BaseAttributes } from '@/models';
 import AppError from '@/utils/error';
 import Helper from '@/utils/helper';
 import { AppResponse } from '@/utils/types';
+import { Order, WhereOptions } from 'sequelize';
 import { Model, ModelCtor } from 'sequelize-typescript';
 
-export interface IBaseService<T extends Model, A> {
+interface FilterPayload<A> {
+  filters?: Array<{
+    column: keyof A;
+    type: string;
+    value: any;
+    operator: string;
+  }>;
+  sort?: Array<{ column: keyof A; order: 'asc' | 'desc' }>;
+  page?: number;
+  pageSize?: number;
+}
+
+export interface IBaseService<T extends Model, A extends BaseAttributes> {
   create(payload: A): Promise<AppResponse<T>>;
   update(id: number, payload: Partial<A>): Promise<AppResponse<T>>;
   delete(id: number): Promise<AppResponse<number>>;
   getById(id: number): Promise<AppResponse<T | null>>;
-  getAll(): Promise<AppResponse<T[]>>;
+  getAll(payload?: FilterPayload<A>): Promise<AppResponse<T[]>>;
 }
 
-export abstract class BaseService<T extends Model, A extends {}>
+export abstract class BaseService<T extends Model, A extends BaseAttributes>
   implements IBaseService<T, A>
 {
   model: ModelCtor<T>;
@@ -85,12 +99,29 @@ export abstract class BaseService<T extends Model, A extends {}>
     };
   };
 
-  getAll = async (): Promise<AppResponse<T[]>> => {
+  getAll = async ({
+    filters = [],
+    sort = [{ column: 'updatedAt', order: 'asc' }],
+    page = 1,
+    pageSize = 20
+  }: FilterPayload<A>): Promise<AppResponse<T[]>> => {
     const records = await this.model.findAll<T>({
       include: {
         all: true,
         nested: true
-      }
+      },
+      where: filters.reduce((acc, filter) => {
+        const { column, type, value, operator } = filter;
+        return {
+          ...acc
+        };
+      }, {} as WhereOptions<A>),
+      order: sort.map((sort) => [
+        sort.column,
+        sort.order.toUpperCase()
+      ]) as Order,
+      limit: pageSize,
+      offset: (page - 1) * pageSize
     });
 
     return {
