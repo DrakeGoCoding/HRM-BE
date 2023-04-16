@@ -110,12 +110,12 @@ export abstract class BaseService<T extends Model, A extends BaseAttributes>
         all: true,
         nested: true
       },
-      where: filters.reduce((acc, filter) => {
-        const { column, type, value, operator } = filter;
+      where: filters.reduce<WhereOptions<A>>((acc, cur) => {
+        const { column, type, value, operator } = cur;
         return {
           ...acc
         };
-      }, {} as WhereOptions<A>),
+      }, {}),
       order: sort.map((sort) => [
         sort.column,
         sort.order.toUpperCase()
