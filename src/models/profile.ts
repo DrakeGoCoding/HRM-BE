@@ -1,5 +1,11 @@
 import AppError from '@/utils/error';
-import { BelongsTo, Column, DataType, Model, Table } from 'sequelize-typescript';
+import {
+  BelongsTo,
+  Column,
+  DataType,
+  Model,
+  Table
+} from 'sequelize-typescript';
 import { BASE_ATTRIBUTES, BaseAttributes } from '.';
 import User, { DEFAULT_PASSWORD, UserRole } from './user';
 
@@ -73,7 +79,10 @@ class Profile extends Model implements ProfileAttributes {
   @Column({
     type: DataType.STRING(10),
     field: 'code',
-    unique: true
+    unique: {
+      name: 'code',
+      msg: 'Code must be unique'
+    }
   })
   code!: string;
 
@@ -100,7 +109,7 @@ class Profile extends Model implements ProfileAttributes {
 
   @Column({
     type: DataType.ENUM(...GENDER),
-    field: 'gender',
+    field: 'gender'
   })
   gender!: Gender;
 

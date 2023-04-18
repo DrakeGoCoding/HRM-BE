@@ -37,7 +37,10 @@ class Position extends Model {
   @Column({
     type: DataType.STRING(10),
     field: 'code',
-    unique: true
+    unique: {
+      name: 'code',
+      msg: 'Code must be unique'
+    }
   })
   code!: string;
 

@@ -30,6 +30,11 @@ class Database {
       define: {
         paranoid: true,
         timestamps: true,
+        defaultScope: {
+          attributes: {
+            exclude: ['deletedAt']
+          }
+        }
       },
       logging: process.env.NODE_ENV === 'development'
     });

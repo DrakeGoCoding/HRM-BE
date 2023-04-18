@@ -10,7 +10,7 @@ export const handleError = (
   const { message = 'Internal Server Error', code = 500, stack } = error;
   const data = Object.assign(
     {},
-    { message },
+    { message: code === 500 ? 'Internal Server Error' : message },
     process.env.NODE_ENV === 'production' ? {} : { stack }
   );
 

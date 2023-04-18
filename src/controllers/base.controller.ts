@@ -28,7 +28,7 @@ export abstract class BaseController<T extends Model, A extends BaseAttributes>
   ): Promise<void> => {
     try {
       const { code, data } = await this.service.getAll(req.body);
-      res.status(code).json({ data });
+      res.status(code).json({ ...data });
     } catch (error) {
       next(error);
     }
